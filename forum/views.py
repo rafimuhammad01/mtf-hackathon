@@ -358,6 +358,7 @@ class VoteForumIncrement(APIView) :
                 "data": repr(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 class VoteAnswerIncrement(APIView) :
     permission_classes = [IsAuthenticated]
 
