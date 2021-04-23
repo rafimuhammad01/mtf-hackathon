@@ -213,11 +213,11 @@
                 "question" : "string",
                 "upvote" : "int"
                 "total_answer" : "int",
-                "created_at" : "string"
+                "created_at" : "string",
+                "is_upvote" : "boolean"
             }
         ],
         "count" : "int"
-        "is_upvote" : "boolean"
     }
 }
 ```
@@ -283,10 +283,12 @@
                 "username" : "string",
                 "answer" : "answer",
                 "upvote" : "int",
-                "is_upvote" : "boolean"
+                "is_upvote" : "boolean",
+                "created_at": "date"
             }
         ],
-        "is_upvote" : "boolean"
+        "is_upvote" : "boolean",
+        "created_at": "date"
     }
 }
 ```
@@ -322,7 +324,8 @@
         "question" : "string",
         "upvote" : "int",
         "answer" : [],
-        "is_upvote" : "boolean"
+        "is_upvote" : "boolean",
+        "created_at": "date"
     }
 }
 ```
@@ -355,7 +358,8 @@
         "username" : "string"
         "answer" : "string",
         "upvote" : "int",
-        "is_upvote" : "boolean"
+        "is_upvote" : "boolean",
+        "created_at": "date"
     }
 }
 ```
@@ -389,7 +393,8 @@
         "title" : "string",
         "question" : "string",
         "upvote" : "int",
-        "is_upvote" : "boolean"
+        "is_upvote" : "boolean",
+        "created_at": "date"
     }
 }
 ```
@@ -420,7 +425,8 @@
         "username" : "string",
         "answer" : "answer",
         "upvote" : "int",
-        "is_upvote" : "boolean"
+        "is_upvote" : "boolean",
+        "created_at": "date"
     }
 }
 ```
