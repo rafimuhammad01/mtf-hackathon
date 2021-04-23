@@ -1,3 +1,103 @@
+# USER
+**POST api/v1/auth/register/**
+----
+  Register User
+* **URL Params**  
+  None
+* **Data Params**  
+  ```
+    {
+      "username" : "test",
+      "password" : "test123456",
+      "password2" : "test123456",
+      "email" : "test@gmail.com",
+      "first_name" : "test",
+      "last_name" : "test"
+    }
+  ```
+* **Headers**  
+  Content-Type: application/json  
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+{
+    "username": "test1",
+    "email": "tes1t@gmail.com",
+    "first_name": "test",
+    "last_name": "test"
+}
+```
+
+**POST api/v1/auth/login/**
+----
+  Login User
+* **URL Params**  
+  None
+* **Data Params**  
+  ```
+    {
+      "username" : "test",
+      "password" : "test123456"
+    }
+  ```
+* **Headers**  
+  Content-Type: application/json
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+  {
+      "refresh": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTI0NzAxNywianRpIjoiMDE4Yzk0M2UwZjMyNDRjM2FkYTllNmM3MmI3YjllYmEiLCJ1c2VyX2lkIjoyfQ.PVi8_eE8QxocXAXe5CDgtAgvBylqcmQ2WrAxUaTz5jI",
+      "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjE5MTYwOTE3LCJqdGkiOiI1YmY5YTdiYzlhZjE0MzZiOWQxZWVmYWJjZjZhNDZiNiIsInVzZXJfaWQiOjJ9.LWsT9Z0CUYJtZze1DDbFwtJqNlyVUEsBbX-eGtZ3UAA"
+  }
+```
+
+**POST api/v1/auth/refresh/**
+----
+  Get user refresh token
+* **URL Params**  
+  None
+* **Data Params**  
+  ```
+    {
+      "refresh" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYxOTI0Njg3NywianRpIjoiNmQ3ZmE5OWFjMTZlNGI0MzkxMDMzOGVkMzYyMzdkOTYiLCJ1c2VyX2lkIjoyfQ.NhnGG-yFjAP9lB0NA0OblesO1tVyM9_qAE0NRv1Fb3I"
+    }
+  ```
+* **Headers**  
+  Content-Type: application/json
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+  {
+      "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjE5MTYwOTE3LCJqdGkiOiI1YmY5YTdiYzlhZjE0MzZiOWQxZWVmYWJjZjZhNDZiNiIsInVzZXJfaWQiOjJ9.LWsT9Z0CUYJtZze1DDbFwtJqNlyVUEsBbX-eGtZ3UAA"
+  }
+```
+
+**POST api/v1/auth/user/**
+----
+  Get user data
+* **URL Params**  
+  None
+* **Data Params**  
+  None
+* **Headers**  
+  Content-Type: application/json \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+  {
+      "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjE5MTYwOTE3LCJqdGkiOiI1YmY5YTdiYzlhZjE0MzZiOWQxZWVmYWJjZjZhNDZiNiIsInVzZXJfaWQiOjJ9.LWsT9Z0CUYJtZze1DDbFwtJqNlyVUEsBbX-eGtZ3UAA"
+  }
+```
+
+
+
+
+
 # DILAN
 
 **GET api/v1/article?category=**
