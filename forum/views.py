@@ -47,7 +47,7 @@ class ForumList(APIView):
                     raise FieldError("sort input not valid")
                 
             else : # if sort exist
-                forum = Forum.objects.filter(title__contains=search)
+                forum = Forum.objects.filter(title__icontains=search)
         
             # Create list of forum
             forumList = []

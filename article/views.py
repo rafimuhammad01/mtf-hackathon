@@ -55,7 +55,7 @@ class ArticleList(APIView) :
                 }, status=status.HTTP_200_OK)
 
             else :
-                article = Article.objects.filter(title__contains=search)
+                article = Article.objects.filter(title__icontains=search)
                 articles = []
                 for i in article :
                     articles.append({
