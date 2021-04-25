@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from mtf_hackathon.error_handler import FieldErrorHandler, EmptyResultSetHandler, ExceptionHandler
 from JWTAuth.models import Employee
 from mtf_hackathon import settings
 from .models import Forum, Topic, Answer
@@ -33,7 +33,6 @@ class ForumList(APIView):
                 categoryObject = Topic.objects.get(topic=category)
                 if not categoryObject:
                     raise EmptyResultSet
-    
                 # Get forum based on category and sort input
                 if sortInput == "date":
                     forum = Forum.objects.filter(topic__in=[categoryObject.id]).order_by("-createdAt")
@@ -85,31 +84,13 @@ class ForumList(APIView):
             return Response(resp, status=status.HTTP_200_OK)
             
         except FieldError as e:
-            return Response({
-                "status": status.HTTP_400_BAD_REQUEST,
-                "message": "paramater invalid",
-                "data": repr(e)
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return FieldErrorHandler(e)
 
         except EmptyResultSet as e :
-            return Response({
-                "status": status.HTTP_404_NOT_FOUND,
-                "message": "category not found",
-                "data": repr(e)
-            }, status=status.HTTP_404_NOT_FOUND)
+            return EmptyResultSetHandler(e)
 
         except Exception as e:
-            if settings.DEBUG:
-                return Response({
-                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": "internal server error",
-                    "data": repr(e)
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            else:
-                return Response({
-                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": "internal server error"
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return ExceptionHandler(e)
 
     def post(self, request):
         try :
@@ -165,33 +146,14 @@ class ForumList(APIView):
                 }
             })
 
-
         except FieldError as e:
-            return Response({
-                "status": status.HTTP_400_BAD_REQUEST,
-                "message": "paramater invalid",
-                "data": repr(e)
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return FieldErrorHandler(e)
 
         except EmptyResultSet as e:
-            return Response({
-                "status": status.HTTP_404_NOT_FOUND,
-                "message": "category not found",
-                "data": repr(e)
-            }, status=status.HTTP_404_NOT_FOUND)
+            return EmptyResultSetHandler(e)
 
         except Exception as e:
-            if settings.DEBUG:
-                return Response({
-                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": "internal server error",
-                    "data": repr(e)
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            else:
-                return Response({
-                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": "internal server error"
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return ExceptionHandler(e)
 
 
 
@@ -240,33 +202,15 @@ class ForumDetail(APIView) :
                 }
             })
 
-        
-        except FieldError as e :
-            return Response({
-                "status": status.HTTP_400_BAD_REQUEST,
-                "message": "paramater invalid",
-                "data": repr(e)
-            }, status=status.HTTP_400_BAD_REQUEST)
 
-        except EmptyResultSet as e :
-            return Response({
-                "status": status.HTTP_404_NOT_FOUND,
-                "message": "category not found",
-                "data": repr(e)
-            }, status=status.HTTP_404_NOT_FOUND)
+        except FieldError as e:
+            return FieldErrorHandler(e)
+
+        except EmptyResultSet as e:
+            return EmptyResultSetHandler(e)
 
         except Exception as e:
-            if settings.DEBUG:
-                return Response({
-                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": "internal server error",
-                    "data": repr(e)
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            else:
-                return Response({
-                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": "internal server error"
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return ExceptionHandler(e)
 
 
     def post(self, request, id):
@@ -299,33 +243,14 @@ class ForumDetail(APIView) :
                 }
             })
 
+        except FieldError as e:
+            return FieldErrorHandler(e)
 
-        except FieldError as e :
-            return Response({
-                "status": status.HTTP_400_BAD_REQUEST,
-                "message": "paramater invalid",
-                "data": repr(e)
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        except EmptyResultSet as e :
-            return Response({
-                "status": status.HTTP_404_NOT_FOUND,
-                "message": "category not found",
-                "data": repr(e)
-            }, status=status.HTTP_404_NOT_FOUND)
+        except EmptyResultSet as e:
+            return EmptyResultSetHandler(e)
 
         except Exception as e:
-            if settings.DEBUG:
-                return Response({
-                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": "internal server error",
-                    "data": repr(e)
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            else:
-                return Response({
-                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": "internal server error"
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return ExceptionHandler(e)
 
 class VoteForumIncrement(APIView) :
     permission_classes = [IsAuthenticated]
@@ -367,32 +292,14 @@ class VoteForumIncrement(APIView) :
                 }
             })
 
-        except FieldError as e :
-            return Response({
-                "status": status.HTTP_400_BAD_REQUEST,
-                "message": "paramater invalid",
-                "data": repr(e)
-            }, status=status.HTTP_400_BAD_REQUEST)
+        except FieldError as e:
+            return FieldErrorHandler(e)
 
-        except EmptyResultSet as e :
-            return Response({
-                "status": status.HTTP_404_NOT_FOUND,
-                "message": "category not found",
-                "data": repr(e)
-            }, status=status.HTTP_404_NOT_FOUND)
+        except EmptyResultSet as e:
+            return EmptyResultSetHandler(e)
 
         except Exception as e:
-            if settings.DEBUG:
-                return Response({
-                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": "internal server error",
-                    "data": repr(e)
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            else:
-                return Response({
-                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": "internal server error"
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return ExceptionHandler(e)
 
 
 class VoteAnswerIncrement(APIView) :
@@ -433,29 +340,11 @@ class VoteAnswerIncrement(APIView) :
                 }
             })
 
-        except FieldError as e :
-            return Response({
-                "status": status.HTTP_400_BAD_REQUEST,
-                "message": "paramater invalid",
-                "data": repr(e)
-            }, status=status.HTTP_400_BAD_REQUEST)
+        except FieldError as e:
+            return FieldErrorHandler(e)
 
-        except EmptyResultSet as e :
-            return Response({
-                "status": status.HTTP_404_NOT_FOUND,
-                "message": "category not found",
-                "data": repr(e)
-            }, status=status.HTTP_404_NOT_FOUND)
+        except EmptyResultSet as e:
+            return EmptyResultSetHandler(e)
 
         except Exception as e:
-            if settings.DEBUG:
-                return Response({
-                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": "internal server error",
-                    "data": repr(e)
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            else:
-                return Response({
-                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": "internal server error"
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return ExceptionHandler(e)

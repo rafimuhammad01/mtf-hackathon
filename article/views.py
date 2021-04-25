@@ -10,6 +10,7 @@ from rest_framework.views import APIView
 from article.models import ArticleSection, Article
 from forum.models import Topic
 from mtf_hackathon import settings
+from mtf_hackathon.error_handler import FieldErrorHandler, ExceptionHandler, EmptyResultSetHandler
 
 
 class ArticleList(APIView) :
@@ -77,31 +78,13 @@ class ArticleList(APIView) :
 
 
         except FieldError as e:
-            return Response({
-                "status": status.HTTP_400_BAD_REQUEST,
-                "message": "paramater invalid",
-                "data": repr(e)
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return FieldErrorHandler(e)
 
-        except EmptyResultSet as e :
-            return Response({
-                "status": status.HTTP_404_NOT_FOUND,
-                "message": "category not found",
-                "data": repr(e)
-            }, status=status.HTTP_404_NOT_FOUND)
+        except EmptyResultSet as e:
+            return EmptyResultSetHandler(e)
 
         except Exception as e:
-            if settings.DEBUG:
-                return Response({
-                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": "internal server error",
-                    "data": repr(e)
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            else :
-                return Response({
-                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": "internal server error"
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return ExceptionHandler(e)
 
 
 class ArticleDetail(APIView) :
@@ -113,7 +96,7 @@ class ArticleDetail(APIView) :
             if id == "":
                 raise FieldError("id input not valid")
             if not article:
-                raise EmptyResultSet("no result for forum id = " + str(id))
+                raise EmptyResultSet("no result for article id = " + str(id))
             else:
                 article = Article.objects.get(id=id)
 
@@ -127,29 +110,12 @@ class ArticleDetail(APIView) :
                 }
             }, status=status.HTTP_200_OK)
 
-        except FieldError as e:
-            return Response({
-                "status": status.HTTP_400_BAD_REQUEST,
-                "message": "paramater invalid",
-                "data": repr(e)
-            }, status=status.HTTP_400_BAD_REQUEST)
 
-        except EmptyResultSet as e :
-            return Response({
-                "status": status.HTTP_404_NOT_FOUND,
-                "message": "category not found",
-                "data": repr(e)
-            }, status=status.HTTP_404_NOT_FOUND)
+        except FieldError as e:
+            return FieldErrorHandler(e)
+
+        except EmptyResultSet as e:
+            return EmptyResultSetHandler(e)
 
         except Exception as e:
-            if settings.DEBUG:
-                return Response({
-                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": "internal server error",
-                    "data": repr(e)
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            else :
-                return Response({
-                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    "message": "internal server error"
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return ExceptionHandler(e)
