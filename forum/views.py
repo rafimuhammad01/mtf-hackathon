@@ -24,10 +24,10 @@ class ForumList(APIView):
             # Validate search
             if not search :
                 # Validate category and sort
-                if category == "":
-                    raise FieldError("category input not valid")
-                if sortInput == "":
-                    raise FieldError("sort input not valid")
+                if not category:
+                    raise FieldError("category or search input not valid")
+                if not sortInput :
+                    raise FieldError("sort or search input not valid")
     
                 # Get topic object based on category
                 categoryObject = Topic.objects.get(topic=category)
@@ -199,7 +199,7 @@ class ForumDetail(APIView) :
     def get(self, request, id):
         try :
             forum = Forum.objects.filter(id=id)
-            if id == "" :
+            if not id :
                 raise FieldError("id input not valid")
             if not forum:
                 raise EmptyResultSet("no result for forum id = "+ str(id))
@@ -272,7 +272,7 @@ class ForumDetail(APIView) :
     def post(self, request, id):
         try :
             forum = Forum.objects.get(id=id)
-            if id == "":
+            if not id :
                 raise FieldError("id input not valid")
             if forum == []:
                 raise EmptyResultSet("no result for forum id = ", id)
@@ -333,7 +333,7 @@ class VoteForumIncrement(APIView) :
     def post (self, request, id) :
         try :
             forum = Forum.objects.get(id=id)
-            if id == "":
+            if not id:
                 raise FieldError("id input not valid")
             if forum == []:
                 raise EmptyResultSet("no result for forum id = ", id)
@@ -401,7 +401,7 @@ class VoteAnswerIncrement(APIView) :
     def post (self, request, id) :
         try :
             answer = Answer.objects.get(id=id)
-            if id == "":
+            if not id:
                 raise FieldError("id input not valid")
             if answer == []:
                 raise EmptyResultSet("no result for forum id = ", id)

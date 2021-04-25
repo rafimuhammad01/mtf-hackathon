@@ -17,13 +17,15 @@ class ArticleList(APIView) :
 
     def get(self, request):
         try :
-            category = request.GET.get("category")
+
             search = request.GET.get("search")
-            if category == "" :
-                raise FieldError("category input not valid")
+
 
             article = ArticleSection.objects.all()
             if not search :
+                category = request.GET.get("category")
+                if not category:
+                    raise FieldError("category or search input not valid")
                 categoryObject = Topic.objects.get(topic=category)
                 if not categoryObject:
                     raise EmptyResultSet
