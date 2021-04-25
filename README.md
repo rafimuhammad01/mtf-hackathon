@@ -117,7 +117,7 @@
     "status" : 200,
     "message" : "success",
     "data" : {
-        "article_section" : [
+        "section" : [
             {
                 "id" : "string",
                 "title" : "string",
@@ -125,11 +125,12 @@
                     {
                         "id" : "string",
                         "title" : "string",
-                        "description" : "string"
+                        "content" : "HTML"
                     }
                 ]
             }
-        ]
+        ],
+        count : "int"
     }
 }
 ```
@@ -155,9 +156,10 @@
             {
                 "id" : "string",
                 "title" : "string",
-                "description" : "string"
+                "content" : "HTML"
             }
-        ]
+        ],
+        count : "int"
     }
 }
 ```
@@ -180,7 +182,7 @@
     "message" : "success",
     "data" : {
         "id" : "string",
-        "judul" : "string",
+        "title" : "string",
         "content" : "HTML"
     }
 }
@@ -247,10 +249,13 @@
                 "title" : "string",
                 "question" : "string",
                 "upvote" : "int"
+                "total_answer" : "int",
+                "created_at" : "string",
+                "is_upvote" : "boolean"
             }
         ],
         "count" : "int",
-        "is_upvote" : "boolean"
+        
     }
 }
 ```
@@ -273,6 +278,7 @@
     "status" : 200,
     "message" : "success",
     "data" : {
+        "id" : "string"
         "username" : "string",
         "title" : "string",
         "question" : "string",

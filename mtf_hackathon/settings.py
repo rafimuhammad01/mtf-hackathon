@@ -59,6 +59,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'JWTAuth',
     'forum',
+    'article',
+    'ckeditor'
 ]
 
 MIDDLEWARE = [

@@ -24,4 +24,5 @@ urlpatterns = [
     path('', include('main.urls')),
     path('api/v1/auth/', include('JWTAuth.urls')),
     path('api/v1/forum/', include('forum.urls')),
+    path('api/v1/article/', include('article.urls'))
 ]

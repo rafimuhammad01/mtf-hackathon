@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from JWTAuth.models import Employee
+from mtf_hackathon import settings
 from .models import Forum, Topic, Answer
 
 
@@ -98,11 +99,17 @@ class ForumList(APIView):
             }, status=status.HTTP_404_NOT_FOUND)
 
         except Exception as e:
-            return Response({
-                "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                "message": "internal server error",
-                "data": repr(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            if settings.DEBUG:
+                return Response({
+                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    "message": "internal server error",
+                    "data": repr(e)
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            else:
+                return Response({
+                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    "message": "internal server error"
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request):
         try :
@@ -174,22 +181,31 @@ class ForumList(APIView):
             }, status=status.HTTP_404_NOT_FOUND)
 
         except Exception as e:
-            return Response({
-                "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                "message": "internal server error",
-                "data": repr(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            if settings.DEBUG:
+                return Response({
+                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    "message": "internal server error",
+                    "data": repr(e)
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            else:
+                return Response({
+                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    "message": "internal server error"
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
 class ForumDetail(APIView) :
     def get(self, request, id):
         try :
-            forum = Forum.objects.get(id=id)
+            forum = Forum.objects.filter(id=id)
             if id == "" :
                 raise FieldError("id input not valid")
-            if forum == []:
-                raise EmptyResultSet("no result for forum id = ", id)
+            if not forum:
+                raise EmptyResultSet("no result for forum id = "+ str(id))
+            else :
+                forum = Forum.objects.get(id=id)
+
 
             answer = []
             for i in forum.answer.all() :
@@ -224,6 +240,7 @@ class ForumDetail(APIView) :
                 }
             })
 
+        
         except FieldError as e :
             return Response({
                 "status": status.HTTP_400_BAD_REQUEST,
@@ -239,11 +256,18 @@ class ForumDetail(APIView) :
             }, status=status.HTTP_404_NOT_FOUND)
 
         except Exception as e:
-            return Response({
-                "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                "message": "internal server error",
-                "data": repr(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            if settings.DEBUG:
+                return Response({
+                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    "message": "internal server error",
+                    "data": repr(e)
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            else:
+                return Response({
+                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    "message": "internal server error"
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
     def post(self, request, id):
         try :
@@ -291,11 +315,17 @@ class ForumDetail(APIView) :
             }, status=status.HTTP_404_NOT_FOUND)
 
         except Exception as e:
-            return Response({
-                "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                "message": "internal server error",
-                "data": repr(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            if settings.DEBUG:
+                return Response({
+                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    "message": "internal server error",
+                    "data": repr(e)
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            else:
+                return Response({
+                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    "message": "internal server error"
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class VoteForumIncrement(APIView) :
     permission_classes = [IsAuthenticated]
@@ -352,11 +382,17 @@ class VoteForumIncrement(APIView) :
             }, status=status.HTTP_404_NOT_FOUND)
 
         except Exception as e:
-            return Response({
-                "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                "message": "internal server error",
-                "data": repr(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            if settings.DEBUG:
+                return Response({
+                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    "message": "internal server error",
+                    "data": repr(e)
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            else:
+                return Response({
+                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    "message": "internal server error"
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class VoteAnswerIncrement(APIView) :
@@ -412,8 +448,14 @@ class VoteAnswerIncrement(APIView) :
             }, status=status.HTTP_404_NOT_FOUND)
 
         except Exception as e:
-            return Response({
-                "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
-                "message": "internal server error",
-                "data": repr(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            if settings.DEBUG:
+                return Response({
+                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    "message": "internal server error",
+                    "data": repr(e)
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            else:
+                return Response({
+                    "status": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    "message": "internal server error"
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
