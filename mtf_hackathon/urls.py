@@ -16,13 +16,19 @@ Including another URLconf
 
 
 from django.conf.urls import url
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+
+from mtf_hackathon import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
     path('api/v1/auth/', include('JWTAuth.urls')),
     path('api/v1/forum/', include('forum.urls')),
-    path('api/v1/article/', include('article.urls'))
+    path('api/v1/article/', include('article.urls')),
+    path('api/v1/course/', include('course.urls'))
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

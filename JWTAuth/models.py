@@ -13,8 +13,6 @@ class Employee(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    #course = models.ManyToManyField('Course', blank=True)
-    #training = models.ManyToManyField('Training', blank=True)
     pewiraMilesBalance = models.FloatField(default=0)
     status = models.IntegerField(default=STAFF, choices=EMPLOYEE_TYPES)
 

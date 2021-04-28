@@ -436,3 +436,49 @@
     }
 }
 ```
+# PUSAT KURSUS
+**GET api/v1/course/**
+----
+  increase or decrease upvote of answer.
+* **URL Params** \
+  None
+* **Data Params** \
+  None
+* **Headers**  
+  Content-Type: application/json \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+{
+    "status" : "200",
+    "message" : "berhasil",
+    "data" : {
+        "my_course" : [
+            {
+                "id" : "string",
+                "name" : "string",
+                "topic" : [],
+                "last_lesson" : {
+                    "id" : "string",
+                    "title" : "string"
+                },
+                "progress" : "float",
+                "img" : "string"
+            }
+        ],
+        "recommendation" : [
+            {
+                "id" : "string",
+                "name" : "string",
+                "description" : "string",
+                "topic" : [],
+                "img" : "string",
+                "price" : "float",
+                "reward" : "float"
+            }
+        ]
+    }
+}
+```
