@@ -4,6 +4,13 @@ from rest_framework.response import Response
 from mtf_hackathon import settings
 
 
+def PermissionDeniedHandler(e) :
+    return Response({
+        "status": status.HTTP_401_UNAUTHORIZED,
+        "message": "unauthorized",
+        "data": repr(e)
+    }, status=status.HTTP_401_UNAUTHORIZED)
+
 def FieldErrorHandler(e) :
     return Response({
         "status": status.HTTP_400_BAD_REQUEST,
@@ -14,7 +21,7 @@ def FieldErrorHandler(e) :
 def EmptyResultSetHandler(e) :
     return Response({
         "status": status.HTTP_404_NOT_FOUND,
-        "message": "category not found",
+        "message": "not found",
         "data": repr(e)
     }, status=status.HTTP_404_NOT_FOUND)
 

@@ -34,22 +34,17 @@ class Course(models.Model) :
     about = RichTextField(blank=True)
     learningPoint = RichTextField(blank=True)
     rating = models.FloatField(default=0)
-    estimateTime = models.TimeField(default=0)
+    totalRating = models.ManyToManyField(Employee, blank=True)
+    estimateTime = models.TimeField()
+    totalParticipant = models.IntegerField(default=0)
     forum = models.ForeignKey(Forum, blank=True, on_delete=models.CASCADE)
+    totalStepAndQuiz = models.FloatField(default=0)
 
     def __str__(self) :
         return self.name
 
 class Section(models.Model) :
-    LESSON = 0
-    QUIZ = 1
-    SECTION_TYPES = [
-        (LESSON, "Lesson"),
-        (QUIZ, "Quiz"),
-    ]
-
     title = models.CharField(max_length=50)
-    type = models.IntegerField(choices=SECTION_TYPES)
     quiz = models.ManyToManyField('Quiz', blank=True)
     lesson = models.ManyToManyField('Lesson', blank=True)
     description = models.TextField(max_length=255, blank=True)
@@ -77,13 +72,16 @@ class Step(models.Model) :
     contentText = RichTextField(blank=True)
     contentVideo = models.URLField(blank=True)
     transcript = models.TextField(blank=True)
-    description = models.TextField(blank=True)
+    timeMinimum = models.TimeField()
+    prevID = models.ForeignKey('Step', on_delete=models.CASCADE, blank=True, null=True, related_name="idPrev")
+    nextID = models.ForeignKey('Step', on_delete=models.CASCADE, blank=True, null=True, related_name="idNext")
 
     def __str__(self):
         return self.title
 
 
 class Quiz(models.Model) :
+    title = models.CharField(max_length=50)
     question  = models.CharField(max_length=50)
     choice1 = models.ForeignKey('Choice', blank=True, on_delete=models.CASCADE, related_name='choice1')
     choice2 = models.ForeignKey('Choice', blank=True, on_delete=models.CASCADE, related_name='choice2')
@@ -111,9 +109,12 @@ class CourseOwned(models.Model) :
     owner = models.ForeignKey(Employee, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     progress = models.FloatField(default=0.0)
+    totalComplete = models.FloatField(default=0)
     isComplete = models.BooleanField(default=False)
-    lastLesson = models.ForeignKey(Lesson, blank=True, on_delete=models.CASCADE)
-    sectionOwned = models.ForeignKey('SectionOwned', blank=True, on_delete=models.CASCADE)
+    lastLesson = models.ForeignKey(Lesson, blank=True, null=True, on_delete=models.CASCADE)
+    lastStep = models.ForeignKey(Step, blank=True, null=True, on_delete=models.CASCADE)
+    lastQuiz = models.ForeignKey(Quiz, blank=True, null=True, on_delete=models.CASCADE)
+    sectionOwned = models.ManyToManyField('SectionOwned', blank=True)
     notes = models.ManyToManyField('Notes', blank=True)
 
     def __str__(self):
@@ -125,8 +126,8 @@ class SectionOwned(models.Model) :
     quizResult = models.FloatField(default=0.0, blank=True)
     isComplete = models.BooleanField(default=False)
     isPassedQuiz = models.BooleanField(default=False)
-    lessonOwned = models.ForeignKey('LessonOwned', blank=True, null=True, on_delete=models.CASCADE)
-    quizOwned = models.ForeignKey('QuizOwned', blank=True, null=True, on_delete=models.CASCADE)
+    lessonOwned = models.ManyToManyField('LessonOwned', blank=True)
+    quizOwned = models.ManyToManyField('QuizOwned', blank=True )
 
     def __str__(self):
         return str(self.owner) + str(self.section)
@@ -143,7 +144,7 @@ class LessonOwned(models.Model) :
     owner = models.ForeignKey(Employee, on_delete=models.CASCADE)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
     isComplete = models.BooleanField(default=False)
-    stepOwned = models.ForeignKey('StepOwned', on_delete=models.CASCADE)
+    stepOwned = models.ManyToManyField('StepOwned', blank=True)
 
     def __str__(self):
         return str(self.owner) + str(self.lesson)
@@ -151,7 +152,7 @@ class LessonOwned(models.Model) :
 class StepOwned(models.Model) :
     owner = models.ForeignKey(Employee, on_delete=models.CASCADE)
     step = models.ForeignKey(Step, on_delete=models.CASCADE)
-    timeConsume = models.TimeField(default=0)
+    timeConsume = models.TimeField(blank=True, null=True)
     isComplete = models.BooleanField(default=False)
 
     def __str__(self):

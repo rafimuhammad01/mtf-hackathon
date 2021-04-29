@@ -437,11 +437,11 @@
 }
 ```
 # PUSAT KURSUS
-**GET api/v1/course/**
+**GET api/v1/course**
 ----
-  increase or decrease upvote of answer.
+  get all course
 * **URL Params** \
-  None
+  *optional:* `search=[string]`
 * **Data Params** \
   None
 * **Headers**  
@@ -455,30 +455,271 @@
     "status" : "200",
     "message" : "berhasil",
     "data" : {
-        "my_course" : [
-            {
-                "id" : "string",
-                "name" : "string",
-                "topic" : [],
-                "last_lesson" : {
+        "my_course" : {
+            "list" : [
+                {
                     "id" : "string",
-                    "title" : "string"
-                },
-                "progress" : "float",
-                "img" : "string"
-            }
+                    "name" : "string",
+                    "topic" : [],
+                    "last_progress" : {
+                        "id": 3,
+                        "title": "Testing Course 1 Section 1 Lesson 1",
+                        "type": "lesson",
+                        "step": {
+                            "id": 4,
+                            "title": "Testing Course 1 Section 1 Lesson 1 Step 2"
+                        },
+                    "progress" : "float",
+                    "img" : "string"
+                }
+            ],
+            "count" :"int"
+        },
+        "course": {
+            "list": [
+                {
+                    "id": "string",
+                    "name": "string",
+                    "description": "string",
+                    "topic": [],
+                    "img": "string",
+                    "price": 0.0,
+                    "reward": 0.0
+                }
+            ],
+            "count": "int"
+        }
+    }
+}
+```
+
+**GET api/v1/course/:ID**
+----
+  get all course
+* **URL Params** \
+  *required:* `ID=[string]`
+* **Data Params** \
+  None
+* **Headers**  
+  Content-Type: application/json \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**
+  
+is_owned=False
+```
+{
+    "status": 200,
+    "message": "success",
+    "data": {
+        "id": 2,
+        "is_owned": false,
+        "name": "test",
+        "about": "<p>awdawd</p>",
+        "learning_point": "<p>awdaw</p>",
+        "rating": 0.0,
+        "total_rating": 0,
+        "total_participant": 0,
+        "estimate_time": "06:00:00",
+        "img": "http://res.cloudinary.com/dr5j1qjsv/image/upload/v1619610821/ipxiy4eokh5kp6hv8oah.jpg",
+        "price": 0.0,
+        "topic": [
+            "Testing"
         ],
-        "recommendation" : [
+        "section": [
             {
-                "id" : "string",
-                "name" : "string",
-                "description" : "string",
-                "topic" : [],
-                "img" : "string",
-                "price" : "float",
-                "reward" : "float"
+                "lesson": [
+                    {
+                        "id": 1,
+                        "title": "Lesson 1"
+                    }
+                ],
+                "quiz": [
+                    {
+                        "id": 1,
+                        "title": "quiz 1"
+                    }
+                ]
             }
         ]
+    }
+}
+```
+is_owned = True
+```
+{
+    "status": 200,
+    "message": "success",
+    "data": {
+        "id": 1,
+        "is_owned": true,
+        "name": "Test Course",
+        "about": "<p>awdawdawdawdawdawd</p>",
+        "learning_point": "<p>adawdawdawdawdawdawd</p>",
+        "section": [
+            {
+                "lesson": [
+                    {
+                        "id": 1,
+                        "title": "Lesson 1"
+                    }
+                ],
+                "quiz": [
+                    {
+                        "id": 1,
+                        "title": "quiz 1"
+                    }
+                ]
+            }
+        ],
+        "last_progress": {
+            "id": 3,
+            "name": "Testing Course 1 Section 1 Lesson 1",
+            "type": 0,
+            "step": {
+                "id": 4,
+                "title": "Testing Course 1 Section 1 Lesson 1 Step 2"
+            }
+        }
+    }
+}
+```
+**POST api/v1/course/:ID/**
+----
+  user buy course
+* **URL Params** \
+  *required:* `ID=[string]`
+* **Data Params** \
+  None
+* **Headers**  
+  Content-Type: application/json \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+{
+    "status": 201,
+    "message": "success",
+}
+```
+
+**GET api/v1/course/lesson/:ID/**
+----
+  get lesson by ID
+* **URL Params** \
+  *required:* `ID=[string]`
+* **Data Params** \
+  None
+* **Headers**  
+  Content-Type: application/json \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+{
+    "status": 200,
+    "message": "success",
+    "data": {
+        "steps": [
+            {
+                "id": 1,
+                "title": "Coba1",
+                "type": 0,
+                "is_complete": true
+            },
+            {
+                "id": 2,
+                "title": "cob2",
+                "type": 1,
+                "is_complete": true
+            }
+        ]
+    }
+}
+```
+
+**POST api/v1/course/lesson/:ID/**
+----
+  Update lesson is_complete status
+* **URL Params** \
+  *required:* `ID=[string]`
+* **Data Params** \
+  None
+* **Headers**  
+  Content-Type: application/json \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+{
+    "status": 200,
+    "message": "success",
+    "data": {
+        "id": 3,
+        "is_complete": true
+    }
+}
+```
+
+**GET api/v1/course/step/:ID/**
+----
+  get step by ID
+* **URL Params** \
+  *required:* `ID=[string]`
+* **Data Params** \
+  None
+* **Headers**  
+  Content-Type: application/json \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+{
+    "status": 200,
+    "message": "success",
+    "data": {
+        "id": 1,
+        "title": "Coba1",
+        "type": 0,
+        "content_text": "<p>Tesuebtste<strong>awdawdawad<u>awdawdawd</u></strong><u>awdawdaw</u></p>",
+        "content_video": "",
+        "transcript": "",
+        "is_complete": true,
+        "time_consume": "00:20:11"
+    }
+}
+```
+
+**POST api/v1/course/step/:ID/**
+----
+  edit is_complete status by timestamps
+* **URL Params** \
+  *required:* `ID=[string]`
+* **Data Params** \
+  ```
+    {
+      "timestamp" : "00:21:00"
+    }
+  ```
+* **Headers**  
+  Content-Type: application/json \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+{
+    "status": 200,
+    "message": "success",
+    "data": {
+        "id": 2,
+        "time_consume": "00:21:00",
+        "is_complete": true
     }
 }
 ```
