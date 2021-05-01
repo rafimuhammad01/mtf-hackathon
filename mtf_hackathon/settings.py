@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'JWTAuth',
     'forum',
     'article',
+    'training',
     'ckeditor',
     'course',
     'cloudinary',

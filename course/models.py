@@ -6,22 +6,6 @@ from forum.models import Forum
 from JWTAuth.models import Employee
 from cloudinary.models import CloudinaryField
 # Create your models here.
-class Training(models.Model):
-    name = models.CharField(max_length=50)
-    schedule = models.ManyToManyField('Schedule', blank=True)
-    img = CloudinaryField('image')
-
-    def __str__(self) :
-        return self.name
-
-class Schedule(models.Model) :
-    title = models.CharField(max_length=50)
-    date = models.DateTimeField()
-    startTime = models.TimeField()
-    endTime = models.TimeField()
-
-    def __str__(self) :
-        return self.title
 
 class Course(models.Model) :
     name = models.CharField(max_length=50)
@@ -101,12 +85,6 @@ class Choice(models.Model) :
     def __str__(self):
         return self.choice
 
-class TrainingOwned(models.Model) :
-    owner = models.ForeignKey(Employee, on_delete=models.CASCADE)
-    training = models.ForeignKey(Training, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return str(self.owner) + str(self.training)
 
 class CourseOwned(models.Model) :
     owner = models.ForeignKey(Employee, on_delete=models.CASCADE)
