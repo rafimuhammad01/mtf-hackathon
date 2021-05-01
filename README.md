@@ -535,12 +535,19 @@ is_owned=False
                         "title": "Lesson 1"
                     }
                 ],
-                "quiz": [
-                    {
-                        "id": 1,
-                        "title": "quiz 1"
-                    }
-                ]
+                "quiz_section": {
+                    "id": 1,
+                    "title": "Coba1",
+                    "description": "Coba1",
+                    "quiz": [
+                        {
+                            "id": 3
+                        },
+                        {
+                            "id": 4
+                        }
+                    ]
+                }
             }
         ]
     }
@@ -565,14 +572,22 @@ is_owned = True
                         "title": "Lesson 1"
                     }
                 ],
-                "quiz": [
-                    {
-                        "id": 1,
-                        "title": "quiz 1"
-                    }
-                ]
+                "quiz_section": {
+                    "id": 1,
+                    "title": "Coba1",
+                    "description": "Coba1",
+                    "quiz": [
+                        {
+                            "id": 3
+                        },
+                        {
+                            "id": 4
+                        }
+                    ]
+                }
             }
         ],
+        "total_score": 0.0
         "last_progress": {
             "id": 3,
             "name": "Testing Course 1 Section 1 Lesson 1",
@@ -720,6 +735,101 @@ is_owned = True
         "id": 2,
         "time_consume": "00:21:00",
         "is_complete": true
+    }
+}
+```
+
+
+**GET api/v1/course/quiz/:ID/**
+----
+  edit is_complete status by timestamps
+* **URL Params** \
+  *required:* `ID=[string]`
+* **Data Params** \
+  None
+* **Headers**  
+  Content-Type: application/json \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+{
+    "status": 200,
+    "message": "success",
+    "data": {
+        "quiz_section": [
+            {
+                "id": 3,
+                "question": "Bla Bla Bla",
+                "choice_1": {
+                    "id": 1,
+                    "choice": "a",
+                    "is_right": false
+                },
+                "choice_2": {
+                    "id": 2,
+                    "choice": "b",
+                    "is_right": false
+                },
+                "choice_3": {
+                    "id": 3,
+                    "choice": "c",
+                    "is_right": true
+                },
+                "choice_4": {
+                    "id": 4,
+                    "choice": "d",
+                    "is_right": false
+                },
+                "point": 10.0
+            }
+        ],
+        "attempt": 2
+    }
+}
+```
+
+**POST api/v1/course/quiz/:ID/**
+----
+  edit is_complete status by timestamps
+* **URL Params** \
+  *required:* `ID=[string]`
+* **Data Params** \
+  ```
+    {
+        "answer" : [
+            {
+                "id" : 3,
+                "answer" : {
+                    "id" : 3
+                }
+            },
+            {
+                "id" : 4,
+                "answer" : {
+                    "id" : 3
+                }
+            }
+        ]
+    }
+  ```
+* **Headers**  
+  Content-Type: application/json \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+{
+    "status": 200,
+    "message": "success",
+    "data": {
+        "id": 1,
+        "is_complete": true,
+        "quiz_result": 20.0,
+        "is_passed": true,
+        "attempt": 2
     }
 }
 ```

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from course.models import Training, Schedule, Course, Section, Lesson, Step, Quiz, Choice, TrainingOwned, CourseOwned, \
-    SectionOwned, QuizOwned, LessonOwned, StepOwned, Notes
+    SectionOwned, QuizOwned, LessonOwned, StepOwned, Notes, QuizSection, QuizSectionOwned
 
 # Register your models here.
 
@@ -19,5 +19,7 @@ admin.site.register(SectionOwned)
 admin.site.register(QuizOwned)
 admin.site.register(LessonOwned)
 admin.site.register(StepOwned)
+admin.site.register(QuizSection)
+admin.site.register(QuizSectionOwned)
 admin.site.register(Notes)
 

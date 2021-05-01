@@ -11,7 +11,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from JWTAuth.models import Employee
 # Create your views here.
-from course.models import CourseOwned, Course, LessonOwned, StepOwned, SectionOwned, QuizOwned, Lesson, Step
+from course.models import CourseOwned, Course, LessonOwned, StepOwned, SectionOwned, QuizOwned, Lesson, Step, Quiz, \
+    Choice, QuizSectionOwned, QuizSection
 from forum.models import Forum, Topic
 from mtf_hackathon.error_handler import EmptyResultSetHandler, ExceptionHandler, FieldErrorHandler, \
     PermissionDeniedHandler
@@ -182,22 +183,28 @@ class CourseDetail(APIView) :
             section = []
             for i in course.section.all() :
                 lesson = []
-                quiz = []
+                quizSection = {
+                    "id" : i.quizSection.id,
+                    "title" : i.quizSection.title,
+                    "description" : i.quizSection.title,
+                    "quiz" : []
+                }
                 for j in i.lesson.all() :
                     lesson.append({
                         "id" : j.id,
                         "title" : j.title
                     })
-                for j in i.quiz.all() :
-                    quiz.append({
+
+
+                for j in  i.quizSection.quiz.all() :
+                    quizSection["quiz"].append({
                         "id" : j.id,
-                        "title" : j.title
                     })
 
                 section.append({
                     "title" : i.title,
                     "lesson" : lesson,
-                    "quiz" : quiz
+                    "quiz_section" : quizSection
                 })
 
             data = {
@@ -218,25 +225,35 @@ class CourseDetail(APIView) :
         else :
             courseOwned = CourseOwned.objects.filter(owner=employee, course=course)[0]
             section = []
+            totalScore = 0
+            quizCount = 0
             for i in course.section.all() :
                 lesson = []
-                quiz = []
+                quizSection = {
+                    "id": i.quizSection.id,
+                    "title": i.quizSection.title,
+                    "description": i.quizSection.title,
+                    "quiz": []
+                }
                 for j in i.lesson.all() :
                     lesson.append({
                         "id" : j.id,
                         "title" : j.title
                     })
 
-                for j in i.quiz.all() :
-                    quiz.append({
-                        "id" : j.id,
-                        "title" : j.title
+                quizSectionOwned = QuizSectionOwned.objects.get(owner=employee, quizSection=i.quizSection)
+                totalScore += quizSectionOwned.quizResult
+                quizCount += 1
+                for j in i.quizSection.quiz.all():
+                    quizSection["quiz"].append({
+                        "id": j.id,
                     })
 
                 section.append({
+                    "id" : i.id,
                     "title": i.title,
                     "lesson" : lesson,
-                    "quiz" : quiz
+                    "quiz_section" : quizSection
                 })
 
             data = {
@@ -245,7 +262,8 @@ class CourseDetail(APIView) :
                 "name": course.name,
                 "about": course.about,
                 "learning_point": course.learningPoint,
-                "section" : section
+                "section" : section,
+                "total_score" : totalScore/quizCount
             }
 
             if courseOwned.lastLesson :
@@ -298,9 +316,12 @@ class CourseDetail(APIView) :
                         for k in j.step.all() :
                             newStepOwned = StepOwned.objects.create(owner=employee, step=k)
                             newLessonOwned.stepOwned.add(newStepOwned)
-                    for j in i.quiz.all() :
+
+                    newQuizSectionOwned = QuizSectionOwned.objects.create(owner=employee, quizSection=i.quizSection)
+                    newSectionOwned.quizSectionOwned.add(newQuizSectionOwned)
+                    for j in i.quizSection.quiz.all() :
                         newQuizOwned = QuizOwned.objects.create(owner=employee, quiz=j)
-                        newSectionOwned.quizOwned.add(newQuizOwned)
+                        newQuizSectionOwned.quizOwned.add(newQuizOwned)
 
                 employee.pewiraMilesBalance -= course.price
                 employee.save()
@@ -395,7 +416,7 @@ class StepView(APIView) :
 
         try :
             employee = Employee.objects.get(user=request.user)
-            stepOwned = StepOwned.objects.get(id=id, owner=employee)
+            stepOwned = StepOwned.objects.get(step__id=id, owner=employee)
 
 
             data = {
@@ -443,6 +464,7 @@ class StepView(APIView) :
 
                     courseOwned.lastLesson = lessonOwned.lesson
                     courseOwned.lastStep = stepOwned.step
+                    courseOwned.lastQuiz = None
                     courseOwned.totalComplete += 1
                     courseOwned.save()
 
@@ -468,3 +490,129 @@ class StepView(APIView) :
             return ExceptionHandler(e)
 
 
+class QuizView(APIView) :
+    def get(self, request, id):
+
+        try :
+            dataRes = {}
+            allQuiz = []
+            owner = Employee.objects.get(user=request.user)
+            for i in QuizSectionOwned.objects.get(quizSection_id=id, owner=owner).quizOwned.all():
+                data = {
+                    "id": i.quiz.id,
+                    "question": i.quiz.question,
+                    "choice_1": {
+                        "id": i.quiz.choice1.id,
+                        "choice": i.quiz.choice1.choice,
+                        "is_right": i.quiz.choice1.isRight
+                    },
+                    "choice_2": {
+                        "id": i.quiz.choice2.id,
+                        "choice": i.quiz.choice2.choice,
+                        "is_right": i.quiz.choice2.isRight
+                    },
+                    "choice_3": {
+                        "id": i.quiz.choice3.id,
+                        "choice": i.quiz.choice3.choice,
+                        "is_right": i.quiz.choice3.isRight
+                    },
+                    "choice_4": {
+                        "id": i.quiz.choice4.id,
+                        "choice": i.quiz.choice4.choice,
+                        "is_right": i.quiz.choice4.isRight
+                    },
+                    "point": i.quiz.point
+                }
+                allQuiz.append(data)
+
+            dataRes["quiz_section"] = allQuiz
+            dataRes["attempt"] = QuizSectionOwned.objects.get(quizSection_id=id, owner=owner).attempt
+            return Response({
+                "status": status.HTTP_200_OK,
+                "message": "success",
+                "data": dataRes
+            })
+        except Exception as e:
+            return ExceptionHandler(e)
+
+    def post(self, request, id):
+        try:
+            '''
+            answer : [
+                {
+                    id :
+                    question :
+                    answer : {
+                        id : 
+                        answer : 
+                    }
+                },
+                {
+                    id :
+                    question :
+                    answer : {
+                        id : 
+                        answer : 
+                    }
+                },
+                
+            ]
+            '''
+
+
+            employee = Employee.objects.get(user=request.user)
+            totalPoint = 0
+
+            quizSection = QuizSection.objects.get(id=id)
+            quizSectionOwned = QuizSectionOwned.objects.get(owner=employee, quizSection_id=id)
+
+            if quizSectionOwned.attempt < 3 :
+                for i in request.data["answer"] :
+                    quizOwned = QuizOwned.objects.get(owner = employee, quiz_id=i["id"])
+                    answer = Choice.objects.get(id=i["answer"]["id"])
+                    quizOwned.isRight = answer.isRight
+                    quizOwned.save()
+                    if quizOwned.isRight :
+                        totalPoint += quizOwned.quiz.point
+
+                quizSectionOwned.quizResult = totalPoint
+                quizSectionOwned.attempt += 1
+                quizSectionOwned.save()
+                if quizSectionOwned.quizResult >= quizSection.minimumQuizScore :
+                    quizSectionOwned.isPassedQuiz = True
+                    quizSectionOwned.isComplete = True
+                    quizSectionOwned.save()
+
+                    sectionOwned = SectionOwned.objects.filter(quizSectionOwned=quizSectionOwned)[0]
+                    courseOwned = CourseOwned.objects.filter(sectionOwned=sectionOwned)[0]
+
+                    courseOwned.lastLesson = None
+                    courseOwned.lastStep = None
+                    courseOwned.lastQuiz = quizSection
+                    courseOwned.totalComplete += 1
+                    courseOwned.save()
+            else :
+                raise PermissionDenied("maximum attempt")
+
+
+            return Response({
+                "status" : status.HTTP_200_OK,
+                "message" : "success",
+                "data" : {
+                    "id" : quizSection.id,
+                    "is_complete" : quizSectionOwned.isComplete,
+                    "quiz_result" : quizSectionOwned.quizResult,
+                    "is_passed" : quizSectionOwned.isPassedQuiz,
+                    "attempt" : quizSectionOwned.attempt
+                }
+            }, status=status.HTTP_200_OK)
+
+
+        except PermissionDenied as e :
+            return PermissionDeniedHandler(e)
+
+        except AttributeError as e:
+            return FieldErrorHandler(e)
+
+        except Exception as e:
+            return ExceptionHandler(e)

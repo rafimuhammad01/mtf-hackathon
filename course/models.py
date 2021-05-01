@@ -45,10 +45,9 @@ class Course(models.Model) :
 
 class Section(models.Model) :
     title = models.CharField(max_length=50)
-    quiz = models.ManyToManyField('Quiz', blank=True)
+    quizSection = models.ForeignKey('QuizSection', blank=True, on_delete=models.CASCADE, null=True)
     lesson = models.ManyToManyField('Lesson', blank=True)
     description = models.TextField(max_length=255, blank=True)
-    minimumQuizScore = models.FloatField(default=0)
 
     def __str__(self) :
         return self.title
@@ -79,9 +78,14 @@ class Step(models.Model) :
     def __str__(self):
         return self.title
 
+class QuizSection(models.Model) :
+    title = models.CharField(max_length=50)
+    description = models.TextField(max_length=255)
+    quiz = models.ManyToManyField("Quiz")
+    minimumQuizScore = models.FloatField(default=0)
+
 
 class Quiz(models.Model) :
-    title = models.CharField(max_length=50)
     question  = models.CharField(max_length=50)
     choice1 = models.ForeignKey('Choice', blank=True, on_delete=models.CASCADE, related_name='choice1')
     choice2 = models.ForeignKey('Choice', blank=True, on_delete=models.CASCADE, related_name='choice2')
@@ -113,7 +117,7 @@ class CourseOwned(models.Model) :
     isComplete = models.BooleanField(default=False)
     lastLesson = models.ForeignKey(Lesson, blank=True, null=True, on_delete=models.CASCADE)
     lastStep = models.ForeignKey(Step, blank=True, null=True, on_delete=models.CASCADE)
-    lastQuiz = models.ForeignKey(Quiz, blank=True, null=True, on_delete=models.CASCADE)
+    lastQuiz = models.ForeignKey(QuizSection, blank=True, null=True, on_delete=models.CASCADE)
     sectionOwned = models.ManyToManyField('SectionOwned', blank=True)
     notes = models.ManyToManyField('Notes', blank=True)
 
@@ -123,14 +127,22 @@ class CourseOwned(models.Model) :
 class SectionOwned(models.Model) :
     owner = models.ForeignKey(Employee, on_delete=models.CASCADE)
     section = models.ForeignKey(Section, on_delete=models.CASCADE)
-    quizResult = models.FloatField(default=0.0, blank=True)
     isComplete = models.BooleanField(default=False)
-    isPassedQuiz = models.BooleanField(default=False)
     lessonOwned = models.ManyToManyField('LessonOwned', blank=True)
-    quizOwned = models.ManyToManyField('QuizOwned', blank=True )
+    quizSectionOwned = models.ManyToManyField('QuizSectionOwned', blank=True )
 
     def __str__(self):
         return str(self.owner) + str(self.section)
+
+
+class QuizSectionOwned(models.Model) :
+    owner = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    quizSection = models.ForeignKey(QuizSection, on_delete=models.CASCADE, null=True)
+    isComplete = models.BooleanField(default=False)
+    quizResult = models.FloatField(default=0.0, blank=True)
+    isPassedQuiz = models.BooleanField(default=False)
+    quizOwned = models.ManyToManyField('QuizOwned', blank=True, null=True)
+    attempt = models.IntegerField(default=0)
 
 class QuizOwned(models.Model) :
     owner = models.ForeignKey(Employee, on_delete=models.CASCADE)
