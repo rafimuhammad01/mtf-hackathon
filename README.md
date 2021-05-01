@@ -833,3 +833,162 @@ is_owned = True
     }
 }
 ```
+
+
+# MULAN
+**POST api/v1/training**
+----
+  Register User
+* **URL Params**  
+  None
+* **Data Params**  
+  None
+* **Headers**  
+  Content-Type: application/json  \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+{
+    "status": 200,
+    "message": "success",
+    "data": [
+        {
+            "date": "2021-05-01",
+            "training": [
+                {
+                    "id": 4,
+                    "name": "test 2",
+                    "img": "",
+                    "start_time": "2021-05-01T09:40:08Z",
+                    "end_time": "2021-05-01T18:00:00Z",
+                    "location": "adaw"
+                }
+            ]
+        },
+        {
+            "date": "2021-05-02",
+            "training": [
+                {
+                    "id": 5,
+                    "name": "test 2",
+                    "img": "",
+                    "start_time": "2021-05-02T06:00:00Z",
+                    "end_time": "2021-05-02T07:00:00Z",
+                    "linkUrl": "http://zoom.us"
+                },
+                {
+                    "id": 1,
+                    "name": "test",
+                    "img": "",
+                    "start_time": "2021-05-02T09:30:26Z",
+                    "end_time": "2021-05-02T18:00:00Z"
+                },
+                {
+                    "id": 2,
+                    "name": "test",
+                    "img": "",
+                    "start_time": "2021-05-02T18:00:00Z",
+                    "end_time": "2021-05-02T19:00:00Z"
+                }
+            ]
+        },
+        {
+            "date": "2021-05-03",
+            "training": [
+                {
+                    "id": 3,
+                    "name": "test",
+                    "img": "",
+                    "start_time": "2021-05-03T18:00:00Z",
+                    "end_time": "2021-05-03T19:00:00Z",
+                    "linkUrl": "http://zoom.us"
+                }
+            ]
+        }
+    ]
+}
+```
+
+**POST api/v1/training?date=**
+----
+  Register User
+* **URL Params**  
+  *required:* `date=[string, YYYY-MM-DD]` 
+* **Data Params**  
+  None
+* **Headers**  
+  Content-Type: application/json  \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+{
+    "status": 200,
+    "message": "success",
+    "data": [
+        {
+            "id": 1,
+            "name": "test",
+            "img": "",
+            "method": null,
+            "start_time": "2021-05-02T09:30:26Z",
+            "end_time": "2021-05-02T18:00:00Z"
+        },
+        {
+            "id": 2,
+            "name": "test",
+            "img": "",
+            "method": null,
+            "start_time": "2021-05-02T18:00:00Z",
+            "end_time": "2021-05-02T19:00:00Z"
+        },
+        {
+            "id": 5,
+            "name": "test 2",
+            "img": "",
+            "method": 0,
+            "start_time": "2021-05-02T06:00:00Z",
+            "end_time": "2021-05-02T07:00:00Z",
+            "linkUrl": "http://zoom.us"
+        }
+    ]
+}
+```
+
+**POST api/v1/training/:ID**
+----
+  Register User
+* **URL Params**  
+   *required:* `ID=[string]`
+* **Data Params**  
+  None
+* **Headers**  
+  Content-Type: application/json  \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+{
+    "status": 200,
+    "message": "success",
+    "data": {
+        "id": 5,
+        "name": "test 2",
+        "img": "",
+        "organizer": "MTF",
+        "about": "",
+        "date": "2021-05-02",
+        "start_time": "06:00:00",
+        "end_time": "07:00:00",
+        "method": 0,
+        "linkUrl": "http://zoom.us"
+    }
+}
+```
+
+
+
