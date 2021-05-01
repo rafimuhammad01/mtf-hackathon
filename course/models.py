@@ -81,7 +81,7 @@ class Step(models.Model) :
 class QuizSection(models.Model) :
     title = models.CharField(max_length=50)
     description = models.TextField(max_length=255)
-    quiz = models.ManyToManyField("Quiz")
+    #quiz = models.ManyToManyField("Quiz")
     minimumQuizScore = models.FloatField(default=0)
 
 
