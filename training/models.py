@@ -32,8 +32,8 @@ class Schedule(models.Model) :
         (OFFLINE, "Offline"),
     ]
     title = models.CharField(max_length=50)
-    startTime = models.DateTimeField()
-    endTime = models.DateTimeField()
+    startTime = models.DateTimeField(default=0)
+    endTime = models.DateTimeField(default=0)
     training = models.ForeignKey(Training, on_delete=models.CASCADE)
     method = models.IntegerField(choices=METHOD, blank=True, null=True)
     linkUrl = models.URLField(blank=True)
