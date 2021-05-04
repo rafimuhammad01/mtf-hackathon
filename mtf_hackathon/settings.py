@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'forum',
     'article',
     'training',
+    'dashboard',
     'ckeditor',
     'course',
     'cloudinary',

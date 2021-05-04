@@ -14,91 +14,97 @@ from JWTAuth.models import Employee
 from training.models import TrainingOwned, Schedule
 
 
-class  TrainingList(APIView) :
-    permission_classes = [IsAuthenticated]
-    def get(self, request):
-        try:
-            if not request.GET.get("date") :
+def TrainingListToJSON(request) :
+    try:
+        if not request.GET.get("date"):
 
-                owner = Employee.objects.get(user=request.user)
-                idTrainingOwned = [i.training.id for i in TrainingOwned.objects.filter(owner=owner)]
+            owner = Employee.objects.get(user=request.user)
+            idTrainingOwned = [i.training.id for i in TrainingOwned.objects.filter(owner=owner)]
 
-                schedule = Schedule.objects.filter(training__in=idTrainingOwned).order_by("startTime")
+            schedule = Schedule.objects.filter(training__in=idTrainingOwned).order_by("startTime")
 
-
-                dicts = {}
-                for i in schedule :
-                    if i.startTime.date() in dicts :
-                        data = {
-                            "id" : i.id,
-                            "name" : i.training.name,
-                            "img" : i.training.img.url,
-                            "start_time" : i.startTime,
-                            "end_time" : i.endTime
-                        }
-                        if i.method == 0:
-                            data["linkUrl"] = i.linkUrl
-                        elif i.method == 1:
-                            data['location'] = i.location
-                        dicts[i.startTime.date()].append(data)
-                    else :
-                        lst = []
-                        data = {
-                            "id": i.id,
-                            "name": i.training.name,
-                            "img": i.training.img.url,
-                            "start_time": i.startTime,
-                            "end_time": i.endTime
-                        }
-                        if i.method == 0:
-                            data["linkUrl"] = i.linkUrl
-                        elif i.method == 1:
-                            data['location'] = i.location
-                        lst.append(data)
-                        dicts[i.startTime.date()] = lst
-
-                dataresp = []
-                for x,y in dicts.items() :
-                    dataresp.append(
-                        {
-
-                            "date" : x,
-                            "training" : y
-                        }
-                    )
-
-            else :
-
-                dataresp = []
-                owner = Employee.objects.get(user=request.user)
-                idTrainingOwned = [i.training.id for i in TrainingOwned.objects.filter(owner=owner)]
-                dateInput = request.GET.get("date")
-                date = datetime.strptime(dateInput, "%Y-%m-%d").date()
-
-                schedule = Schedule.objects.filter(training__in=idTrainingOwned, startTime__date=date)
-
-                for i in schedule :
+            dicts = {}
+            for i in schedule:
+                if i.startTime.date() in dicts:
                     data = {
                         "id": i.id,
                         "name": i.training.name,
                         "img": i.training.img.url,
-                        "method" : i.method,
                         "start_time": i.startTime,
-                        "end_time": i.endTime,
+                        "end_time": i.endTime
                     }
-                    if i.method == 0 :
+                    if i.method == 0:
                         data["linkUrl"] = i.linkUrl
-                    elif i.method == 1 :
+                    elif i.method == 1:
                         data['location'] = i.location
+                    dicts[i.startTime.date()].append(data)
+                else:
+                    lst = []
+                    data = {
+                        "id": i.id,
+                        "name": i.training.name,
+                        "img": i.training.img.url,
+                        "start_time": i.startTime,
+                        "end_time": i.endTime
+                    }
+                    if i.method == 0:
+                        data["linkUrl"] = i.linkUrl
+                    elif i.method == 1:
+                        data['location'] = i.location
+                    lst.append(data)
+                    dicts[i.startTime.date()] = lst
 
-                    dataresp.append(data)
+            dataresp = []
+            for x, y in dicts.items():
+                dataresp.append(
+                    {
 
+                        "date": x,
+                        "training": y
+                    }
+                )
+
+        else:
+
+            dataresp = []
+            owner = Employee.objects.get(user=request.user)
+            idTrainingOwned = [i.training.id for i in TrainingOwned.objects.filter(owner=owner)]
+            dateInput = request.GET.get("date")
+            date = datetime.strptime(dateInput, "%Y-%m-%d").date()
+
+            schedule = Schedule.objects.filter(training__in=idTrainingOwned, startTime__date=date)
+
+            for i in schedule:
+                data = {
+                    "id": i.id,
+                    "name": i.training.name,
+                    "img": i.training.img.url,
+                    "method": i.method,
+                    "start_time": i.startTime,
+                    "end_time": i.endTime,
+                }
+                if i.method == 0:
+                    data["linkUrl"] = i.linkUrl
+                elif i.method == 1:
+                    data['location'] = i.location
+
+                dataresp.append(data)
+
+        return dataresp
+    except Exception as e:
+        return ExceptionHandler(e)
+
+
+class  TrainingList(APIView) :
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        try:
 
             return Response({
                 "status" : status.HTTP_200_OK,
                 "message" : "success",
-                "data" : dataresp
-            })
+                "data" : TrainingListToJSON(request)
+            }, status=status.HTTP_200_OK)
 
             '''
             data : [

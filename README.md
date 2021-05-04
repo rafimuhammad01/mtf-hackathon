@@ -836,9 +836,9 @@ is_owned = True
 
 
 # MULAN
-**POST api/v1/training**
+**GET api/v1/training**
 ----
-  Register User
+  Get All User Training
 * **URL Params**  
   None
 * **Data Params**  
@@ -911,9 +911,9 @@ is_owned = True
 }
 ```
 
-**POST api/v1/training?date=**
+**GET api/v1/training?date=**
 ----
-  Register User
+  Get User Training By Date
 * **URL Params**  
   *required:* `date=[string, YYYY-MM-DD]` 
 * **Data Params**  
@@ -958,9 +958,9 @@ is_owned = True
 }
 ```
 
-**POST api/v1/training/:ID**
+**GET api/v1/training/:ID**
 ----
-  Register User
+  Get Training Detail
 * **URL Params**  
    *required:* `ID=[string]`
 * **Data Params**  
@@ -986,6 +986,65 @@ is_owned = True
         "end_time": "07:00:00",
         "method": 0,
         "linkUrl": "http://zoom.us"
+    }
+}
+```
+
+# DASHBOARD
+**POST api/v1/training**
+----
+  Register User
+* **URL Params**  
+  None
+* **Data Params**  
+  None
+* **Headers**  
+  Content-Type: application/json  \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+{
+    "status": 200,
+    "message": "success",
+    "data": {
+        "course_training_total": 3,
+        "total_spent_time": "00:21:00",
+        "avg_score": 50.0,
+        "pewira_miles_balance": 30.0,
+        "last_course": [
+            {
+                "id": 3,
+                "name": "Testing Course 1",
+                "topic": [
+                    "Testing",
+                    "string"
+                ],
+                "last_progress": {
+                    "id": 1,
+                    "title": "Coba1",
+                    "type": "quiz"
+                },
+                "progress": 1.25,
+                "img": ""
+            }
+        ],
+        "training": [
+            {
+                "date": "2021-05-01",
+                "training": [
+                    {
+                        "id": 4,
+                        "name": "test 2",
+                        "img": "",
+                        "start_time": "2021-05-01T09:40:08Z",
+                        "end_time": "2021-05-01T18:00:00Z",
+                        "location": "adaw"
+                    }
+                ]
+            }
+        ]
     }
 }
 ```

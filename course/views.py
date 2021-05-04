@@ -567,6 +567,7 @@ class QuizView(APIView) :
             quizSectionOwned = QuizSectionOwned.objects.get(owner=employee, quizSection_id=id)
 
             if quizSectionOwned.attempt < 3 :
+                allPoint = 0
                 for i in request.data["answer"] :
                     quizOwned = QuizOwned.objects.get(owner = employee, quiz_id=i["id"])
                     answer = Choice.objects.get(id=i["answer"]["id"])
@@ -574,8 +575,9 @@ class QuizView(APIView) :
                     quizOwned.save()
                     if quizOwned.isRight :
                         totalPoint += quizOwned.quiz.point
+                    allPoint += quizOwned.quiz.point
 
-                quizSectionOwned.quizResult = totalPoint
+                quizSectionOwned.quizResult = (totalPoint / allPoint) * 100
                 quizSectionOwned.attempt += 1
                 quizSectionOwned.save()
                 if quizSectionOwned.quizResult >= quizSection.minimumQuizScore :
