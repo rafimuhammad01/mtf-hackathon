@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from JWTAuth.models import Employee
 from adminpage.views import getAvg
 from course.models import CourseOwned, StepOwned, QuizSectionOwned
-from dashboard.models import BalanceHistory
+from dashboard.models import BalanceHistory, Notification
 from training.models import TrainingOwned
 from training.views import TrainingList, TrainingListToJSON
 from rest_framework.views import APIView
@@ -135,7 +135,7 @@ class ProfileView(APIView) :
             "message" : "success",
             "data" : {
                 "id" : employee.user.id,
-                "img" : employee.img,
+                "img" : employee.img.url,
                 "first_name" : employee.user.first_name,
                 "last_name" : employee.user.last_name,
                 "sex" : employee.sex,
@@ -170,4 +170,48 @@ class ProfileView(APIView) :
                 "department" : newEmployee.department,
                 "start_work_date" : newEmployee.start_work_date,
             }
+        })
+
+
+class NotificationView(APIView) :
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request) :
+        employee = Employee.objects.get(user=request.user)
+        notification = Notification.objects.filter(owner=employee)
+
+        dataResp = []
+        for i in notification :
+            dataResp.append({
+                "id" : i.id,
+                "created_at" : i.createdAt,
+                "notif" : i.notif,
+                "category" : i.category,
+                "is_read" : i.isRead
+            })
+
+        return Response({
+            "status" : 200,
+            "message" : "success",
+            "data" : dataResp
+        })
+
+    def post(self, request):
+        employee = Employee.objects.get(user=request.user)
+        notification = Notification.objects.filter(owner=employee)
+
+        dataResp = []
+        for i in notification:
+            i.isRead = True
+            dataResp.append({
+                "id": i.id,
+                "created_at": i.created_at,
+                "notif": i.notif,
+                "category": i.category,
+                "is_read": i.isRead
+            })
+        return Response({
+            "status": 201,
+            "message": "status updated",
+            "data": dataResp
         })

@@ -705,7 +705,9 @@ is_owned = True
         "content_video": "",
         "transcript": "",
         "is_complete": true,
-        "time_consume": "00:20:11"
+        "time_consume": "00:20:11",
+        "next_id": 11,
+        "prev_id": -1
     }
 }
 ```
@@ -990,10 +992,105 @@ is_owned = True
 }
 ```
 
-# DASHBOARD
-**POST api/v1/training**
+# ADMIN
+**POST /api/v1/admin/training/**
 ----
-  Register User
+  Create Training by Admin
+* **URL Params**  
+  None
+* **Data Params**  
+  ```
+   {
+    "training" : {
+        "name" : "string",
+        "topic" : "string",
+        "about" : "testing",
+        "img" : "testing",
+        "organizer" : "string",
+        "schedule" : {
+            "start_time" : "2021-06-05 05:41:00",
+            "end_time" : "2021-06-05 08:41:00"
+        },
+        "competency" : [
+            {
+                "duration" : "20:00:00"
+            }
+        ],
+        "method" : 0,
+        "link_url" : "zoom.us",
+        "participant" : [
+            {
+                "username" : "test"
+            }
+        ]
+    }
+  }
+  ```
+* **Headers**  
+  Content-Type: application/json  \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+{
+    "status": 201,
+    "message": "success"
+}
+```
+
+
+**GET api/v1/admin/training/**
+----
+  Get All Training by Admin
+* **URL Params**  
+  *optional:* `category=[string]`\
+  *optional:* `search=[string]`\
+  *optional:* `date=[string, YYYY-MM-DD]`
+* **Data Params**  
+  None
+* **Headers**  
+  Content-Type: application/json  \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+  {
+      "status": 200,
+      "message": "success",
+      "data": [
+          {
+              "id": 1,
+              "name": "test",
+              "img": "http://res.cloudinary.com/dr5j1qjsv/image/upload/v1619861403/oaitsjeswsgtbfcnibwl.png",
+              "organizer": "MTF",
+              "topic": [],
+              "schedule": "Jadwal telah terlewati",
+              "user_count": 1
+          },
+          {
+              "id": 4,
+              "name": "string",
+              "img": "http://res.cloudinary.com/dr5j1qjsv/image/upload/testing",
+              "organizer": "string",
+              "topic": [
+                  "string"
+              ],
+              "schedule": {
+                  "start_time": "2021-06-05T05:41:00Z",
+                  "end_time": "2021-06-05T08:41:00Z"
+              },
+              "user_count": 1
+          }
+      ]
+  }
+
+```
+
+**GET /api/v1/admin/employee**
+----
+  Get All Employee by Admin
 * **URL Params**  
   None
 * **Data Params**  
@@ -1005,49 +1102,463 @@ is_owned = True
 * **Code:** 200  
   **Content:**  
 ```
-{
+  {
     "status": 200,
     "message": "success",
-    "data": {
-        "course_training_total": 3,
-        "total_spent_time": "00:21:00",
-        "avg_score": 50.0,
-        "pewira_miles_balance": 30.0,
-        "last_course": [
-            {
-                "id": 3,
-                "name": "Testing Course 1",
-                "topic": [
-                    "Testing",
-                    "string"
-                ],
-                "last_progress": {
-                    "id": 1,
-                    "title": "Coba1",
-                    "type": "quiz"
-                },
-                "progress": 1.25,
-                "img": ""
-            }
-        ],
-        "training": [
-            {
-                "date": "2021-05-01",
-                "training": [
-                    {
-                        "id": 4,
-                        "name": "test 2",
-                        "img": "",
-                        "start_time": "2021-05-01T09:40:08Z",
-                        "end_time": "2021-05-01T18:00:00Z",
-                        "location": "adaw"
-                    }
-                ]
-            }
-        ]
-    }
+    "data": [
+        {
+            "username": "test",
+            "email": "test@gmail.com",
+            "first_name": "Rafi",
+            "last_name": "Muhammad",
+            "department": "IT",
+            "start_work_date": "2021-05-05T11:04:15.434850Z"
+        },
+        {
+            "username": "admin",
+            "email": "",
+            "first_name": "",
+            "last_name": "",
+            "department": "HR",
+            "start_work_date": "2021-05-05T13:41:25Z"
+        }
+    ]
 }
+
+```
+
+**GET /api/v1/admin/employee/:username**
+----
+  Get All Employee by ID by Admin
+* **URL Params**  
+  *required:* `username=[string]`
+* **Data Params**  
+  None
+* **Headers**  
+  Content-Type: application/json  \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+    {
+      "status": 200,
+      "message": "success",
+      "data": {
+          "username": "test",
+          "email": "test@gmail.com",
+          "first_name": "Rafi",
+          "last_name": "Muhammad",
+          "img": "http://res.cloudinary.com/dr5j1qjsv/image/upload/v1620188084/qdb4mdvthgzkzofolmme.jpg",
+          "department": "IT",
+          "position": "backend",
+          "course": {
+              "course": [
+                  {
+                      "id": 3,
+                      "name": "Testing Course 1",
+                      "category": [
+                          "Testing",
+                          "string"
+                      ],
+                      "date_join": "2021-05-06T11:22:51.600941Z",
+                      "progress": 1.25,
+                      "score": 50.0,
+                      "isWorkingOn": true
+                  }
+              ],
+              "count": 1
+          },
+          "training": {
+              "training": [
+                  {
+                      "id": 1,
+                      "name": "test",
+                      "category": [],
+                      "schedule": "jadwal telah terlewati"
+                  },
+                  {
+                      "id": 4,
+                      "name": "string",
+                      "category": [
+                          "string"
+                      ],
+                      "schedule": "2021-06-05T05:41:00Z"
+                  }
+              ],
+              "count": 2
+          }
+      }
+    }
+
+```
+
+**GET /api/v1/admin/pewiraMiles/**
+----
+  Send pewira miles
+* **URL Params**  
+  None
+* **Data Params**  
+  ```
+    {
+        "username" : "test",
+        "nominal" : 40.0,
+        "notes" : "testing"
+    }
+  ```
+* **Headers**  
+  Content-Type: application/json  \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 201  
+  **Content:**  
+```
+    {
+      "status": 201,
+      "message": "succes"
+    }
+
 ```
 
 
+**GET /api/v1/admin/course/**
+----
+  Create Course
+* **URL Params**  
+  None
+* **Data Params**  
+  ```
+   {
+      "course" : {
+          "name" : "course beneran jadi",
+          "category" : "string",
+          "img" : "img",
+          "description" : "description",
+          "price" : 200,
+          "sylabus" : "html",
+          "estimate_time" : "08:00:00",
+          "section" : [
+              {
+                  "title" : "string",
+                  "description" : "string",
+                  "lesson" : [
+                      {
+                          "title" : "string",
+                          "step" : [
+                              {
+                                  "title" : "string",
+                                  "type" : 1,
+                                  "content_text" : "html",
+                                  "content_video" : "url",
+                                  "time_minimum" : "00:10:00"
+                              },
+                              {
+                                  "title" : "string 1",
+                                  "type" : 0,
+                                  "content_text" : "html",
+                                  "content_video" : "url",
+                                  "time_minimum" : "00:10:00"
+                              }
+                          ]
+                          
+                      }
+                  ],
+                  "quiz" : {
+                          "title" : "string",
+                          "description" : "string",
+                          "minimum_score" : 60.2,
+                          "quiz" : [
+                              {
+                                  "question" : "string",
+                                  "choice_1" : {
+                                      "choice" : "string",
+                                      "is_right" : "true"
+                                  },
+                                  "choice_2" : {
+                                      "choice" : "string",
+                                      "is_right" : "false"
+                                  },
+                                  "choice_3": {
+                                      "choice": "string",
+                                      "is_right": "false"
+                                  },
+                                  "choice_4": {
+                                      "choice": "string",
+                                      "is_right": "false"
+                                  },
+                                  "point" : 20
+                              }
+                          ]
+                  }
+              }
+          ]
+      }
+  }
+  ```
+* **Headers**  
+  Content-Type: application/json  \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 201  
+  **Content:**  
+```
+    {
+        "status": 201,
+        "message": "success"
+    }
+
+```
+
+**GET /api/v1/admin/dashboard/**
+----
+  admin dashboard
+* **URL Params**  
+  None
+* **Data Params**  
+  None
+* **Headers**  
+  Content-Type: application/json  \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 201  
+  **Content:**  
+```
+    {
+        "status": 200,
+        "message": "success",
+        "data": {
+            "user_total": 4,
+            "course_total": 5,
+            "training_total": 4,
+            "training_today": [
+                {
+                    "id": 7,
+                    "name": "string",
+                    "img": "http://res.cloudinary.com/dr5j1qjsv/image/upload/testing",
+                    "method": 0,
+                    "start_time": "2021-05-09T19:53:53Z",
+                    "end_time": "2021-05-09T19:53:54Z",
+                    "linkUrl": "http://zoom.us"
+                }
+            ]
+        }
+    }
+
+```
+
+
+**GET /api/v1/admin/course/?**
+----
+  admin dashboard
+* **URL Params**  
+  *optional:* `category=[string]` \
+  *optional:* `search=[string]`
+* **Data Params**  
+  None
+* **Headers**  
+  Content-Type: application/json  \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 201  
+  **Content:**  
+```
+    {
+        "status": 200,
+        "message": "success",
+        "data": {
+            "user_total": 4,
+            "course_total": 5,
+            "training_total": 4,
+            "training_today": [
+                {
+                    "id": 7,
+                    "name": "string",
+                    "img": "http://res.cloudinary.com/dr5j1qjsv/image/upload/testing",
+                    "method": 0,
+                    "start_time": "2021-05-09T19:53:53Z",
+                    "end_time": "2021-05-09T19:53:54Z",
+                    "linkUrl": "http://zoom.us"
+                }
+            ]
+        }
+    }
+
+```
+
+
+# USER DASHBOARD
+**GET api/v1/dashboard/history**
+----
+  get user dashboard
+* **URL Params**  
+  None
+* **Data Params**
+  None
+* **Headers**  
+  Content-Type: application/json  \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+  {
+      "status": 200,
+      "message": "success",
+      "data": {
+          "course_training_total": 4,
+          "total_spent_time": "00:23:00",
+          "avg_score": 100.0,
+          "pewira_miles_balance": 101160.0,
+          "last_course": [
+              {
+                  "id": 3,
+                  "name": "Testing Course 1",
+                  "topic": [
+                      "Testing",
+                      "string"
+                  ],
+                  "last_progress": {
+                      "id": 3,
+                      "title": "Testing Course 1 Section 1 Lesson 1",
+                      "type": "lesson",
+                      "step": {
+                          "id": 3,
+                          "title": "Testing Course 1 Section 1 Lesson 1 Step 1"
+                      }
+                  },
+                  "progress": 0.75,
+                  "img": "http://res.cloudinary.com/dr5j1qjsv/image/upload/v1619689377/r4rro5enqjhppcicpram.png"
+              },
+              {
+                  "id": 16,
+                  "name": "course beneran jadi",
+                  "topic": [
+                      "string"
+                  ],
+                  "last_progress": {
+                      "id": 5,
+                      "title": "string",
+                      "type": "quiz"
+                  },
+                  "progress": 1.0,
+                  "img": "http://res.cloudinary.com/dr5j1qjsv/image/upload/img"
+              }
+          ],
+          "training": [
+              {
+                "date": "2021-06-05",
+                "training": [
+                    {
+                        "id": 8,
+                        "name": "string",
+                        "img": "http://res.cloudinary.com/dr5j1qjsv/image/upload/testing",
+                        "start_time": "2021-06-05T05:41:00Z",
+                        "end_time": "2021-06-05T08:41:00Z",
+                        "linkUrl": "zoom.us"
+                    }
+                ]
+              }
+          ]
+      }
+  }
+```
+
+**GET /api/v1/dashboard/profile/**
+----
+  get user profile
+* **URL Params**  
+  None
+* **Data Params**
+  None
+* **Headers**  
+  Content-Type: application/json  \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+  {
+      "status": 200,
+      "message": "success",
+      "data": {
+          "id": 4,
+          "img": "http://res.cloudinary.com/dr5j1qjsv/image/upload/v1620461885/rbpkzflohlsoomppaomb.jpg",
+          "first_name": "Jason",
+          "last_name": "Mraz",
+          "sex": 0,
+          "position": "Head of Marketing",
+          "department": "Marketing",
+          "start_work_date": "2021-05-05T11:04:15Z"
+      }
+  }
+```
+
+
+**GET api/v1/dashboard/notification**
+----
+  get user notification
+* **URL Params**  
+  None
+* **Data Params**
+  None
+* **Headers**  
+  Content-Type: application/json  \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+  {
+      "status": 200,
+      "message": "success",
+      "data": [
+          {
+              "id": 2,
+              "created_at": "2021-05-08T18:55:01.983542Z",
+              "notif": "Kamu berhasil membeli kursusstring",
+              "category": "kursus",
+              "is_read": false
+          }
+      ]
+  }
+```
+
+**GET api/v1/dashboard/notification**
+----
+  get user notification
+* **URL Params**  
+  None
+* **Data Params**
+  ```
+    {
+        "first_name" : "test",
+        "last_name" : "test",
+        "img" : "img",
+        "sex" : 0,
+        "position" : "head of test",
+        "departement"  : "test"
+    }
+  ```
+* **Headers**  
+  Content-Type: application/json  \
+  Authorization : Bearer `XXX`
+* **Success Response:**  
+* **Code:** 200  
+  **Content:**  
+```
+  {
+      "status": 201,
+      "message": "update success",
+      "data": {
+          "id": 4,
+          "img": "http://res.cloudinary.com/dr5j1qjsv/image/upload/v1620504765/fvcwu4f45gejksszbk0d.jpg",
+          "first_name" : "test",
+          "last_name" : "test",
+          "sex" : 0,
+          "position" : "head of test",
+          "departement"  : "test"
+          "start_work_date": "2021-05-05T11:04:15Z"
+      }
+  }
+```
 

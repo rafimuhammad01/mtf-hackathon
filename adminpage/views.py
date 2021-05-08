@@ -15,6 +15,7 @@ from rest_framework.views import APIView
 from JWTAuth.models import Employee
 from course.models import Course, CourseOwned, Section, Lesson, Step, QuizSection, Choice, Quiz, AccessTime, \
     QuizSectionOwned
+from dashboard.models import Notification, BalanceHistory
 from forum.models import Topic, Forum
 from mtf_hackathon.error_handler import PermissionDeniedHandler, ExceptionHandler
 from training.models import Training, Schedule, TrainingOwned
@@ -506,6 +507,7 @@ class TrainingView(APIView) :
                 for i in trainingInput["participant"] :
                     owner = Employee.objects.get(user__username=i['username'])
                     trainingOwned = TrainingOwned.objects.create(owner=owner, training=training)
+                    notif = Notification.objects.create(owner=owner, notif="Kamu telah terdaftar pada pelatihan " + trainingOwned.training.name, category="Pelatihan")
 
             return Response({
                 "status" : 201,
@@ -651,5 +653,37 @@ class EmployeeDetailView(APIView) :
                 }
             })
 
+        except PermissionDenied as e :
+            return PermissionDeniedHandler(e)
+
+
+class PewiraMilesBalanceView(APIView) :
+
+    data_input = {
+        "username" : "testing",
+        "nominal" : 40.0,
+        "notes" : "testing"
+    }
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+
+        try :
+            admin = Employee.objects.get(user=request.user)
+            if admin.status == 0:
+                raise PermissionDenied("user is not admin")
+            username = request.data["username"]
+            nominal = request.data["nominal"]
+            notes = request.data["notes"]
+
+            employee = Employee.objects.get(user__username=username)
+            employee.pewiraMilesBalance += nominal
+
+            historyBalance = BalanceHistory.objects.create(owner=employee, description=notes, balance=nominal, type="Admin")
+            notification = Notification.objects.create(owner=employee, notif="Kamu mendapat hadiah dari Admin", category="Pewira Miles Balance")
+
+            return Response({
+                "status" : 201,
+                "message" : "succes",
+            }, status=status.HTTP_201_CREATED)
         except PermissionDenied as e :
             return PermissionDeniedHandler(e)

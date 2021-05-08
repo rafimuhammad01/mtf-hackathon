@@ -13,6 +13,7 @@ from JWTAuth.models import Employee
 # Create your views here.
 from course.models import CourseOwned, Course, LessonOwned, StepOwned, SectionOwned, QuizOwned, Lesson, Step, Quiz, \
     Choice, QuizSectionOwned, QuizSection
+from dashboard.models import BalanceHistory, Notification
 from forum.models import Forum, Topic
 from mtf_hackathon.error_handler import EmptyResultSetHandler, ExceptionHandler, FieldErrorHandler, \
     PermissionDeniedHandler
@@ -327,6 +328,8 @@ class CourseDetail(APIView) :
                 employee.save()
                 course.totalParticipant += 1
                 course.save()
+                BalanceHistory.objects.create(owner=employee, description="Kamu berhasil membeli kursus " + course.name, balance = -1*course.price, type="Kursus")
+                Notification.objects.create(owner=employee, notif="Kamu berhasil membeli kursus" + course.name, category="kursus")
                 return Response({
                     "status": status.HTTP_201_CREATED,
                     "message": "success",
@@ -344,8 +347,7 @@ class LessonView(APIView) :
         try:
             employee = Employee.objects.get(user=request.user)
             lessonOwned = LessonOwned.objects.filter(lesson__id=id, owner=employee)
-            print(employee)
-            print(lessonOwned)
+
             if not lessonOwned :
                 raise PermissionDenied("user do not have this lesson")
             else :
@@ -449,7 +451,6 @@ class StepView(APIView) :
 
             employee = Employee.objects.get(user=request.user)
             step = Step.objects.get(id=id)
-            print(step)
             stepOwned = StepOwned.objects.get(step__id=id, owner=employee)
 
             if not stepOwned.isComplete :
@@ -468,9 +469,39 @@ class StepView(APIView) :
                     courseOwned.totalComplete += 1
                     courseOwned.save()
 
+                    isLessonComplete = False
+                    for i in lessonOwned.stepOwned.all() :
+                        if i.isComplete :
+                            isLessonComplete = True
+                        else :
+                            isLessonComplete = False
+                            break
+                    lessonOwned.isComplete = isLessonComplete
+                    lessonOwned.save()
+                    isSectionComplete = False
+                    for i in sectionOwned.lessonOwned.all() :
+                        if i.isComplete :
+                            isSectionComplete = True
+                        else :
+                            isSectionComplete = False
+                            break
+                    for i in sectionOwned.quizSectionOwned.all() :
+                        if i.isComplete:
+                            isSectionComplete = True
+                        else:
+                            isSectionComplete = False
+                            break
+                    sectionOwned.isComplete = isSectionComplete
+                    sectionOwned.save()
 
-
-
+                    if courseOwned.totalComplete / courseOwned.course.totalStepAndQuiz == 1.0:
+                        employee.pewiraMilesBalance += courseOwned.course.reward
+                        BalanceHistory.objects.create(owner=employee,
+                                                      description="Hadiah kursus " + courseOwned.course.name,
+                                                      balance=courseOwned.course.reward, type="Kursus")
+                        Notification.objects.create(owner=employee,
+                                                    notif="Kamu mendapatkan hadiah karena menyelesaikan kursus" + courseOwned.course.name,
+                                                    category="Kursus")
 
             return Response({
                 "status": status.HTTP_200_OK,
@@ -580,11 +611,10 @@ class QuizView(APIView) :
                 quizSectionOwned.quizResult = (totalPoint / allPoint) * 100
                 quizSectionOwned.attempt += 1
                 quizSectionOwned.save()
-                if quizSectionOwned.quizResult >= quizSection.minimumQuizScore :
+                if quizSectionOwned.quizResult >= quizSection.minimumQuizScore and not quizSectionOwned.isComplete :
                     quizSectionOwned.isPassedQuiz = True
                     quizSectionOwned.isComplete = True
                     quizSectionOwned.save()
-
                     sectionOwned = SectionOwned.objects.filter(quizSectionOwned=quizSectionOwned)[0]
                     courseOwned = CourseOwned.objects.filter(sectionOwned=sectionOwned)[0]
 
@@ -593,6 +623,17 @@ class QuizView(APIView) :
                     courseOwned.lastQuiz = quizSection
                     courseOwned.totalComplete += 1
                     courseOwned.save()
+
+                    if courseOwned.totalComplete / courseOwned.course.totalStepAndQuiz == 1.0:
+
+                        employee.pewiraMilesBalance += courseOwned.course.reward
+                        employee.save()
+                        BalanceHistory.objects.create(owner=employee,
+                                                      description="Hadiah kursus " + courseOwned.course.name,
+                                                      balance=courseOwned.course.reward, type="Kursus")
+                        Notification.objects.create(owner=employee,
+                                                    notif="Kamu mendapatkan hadiah karena menyelesaikan kursus" + courseOwned.course.name,
+                                                    category="Kursus")
             else :
                 raise PermissionDenied("maximum attempt")
 
