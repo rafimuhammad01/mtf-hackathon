@@ -30,7 +30,8 @@ urlpatterns = [
     path('api/v1/article/', include('article.urls')),
     path('api/v1/course/', include('course.urls')),
     path('api/v1/training/', include('training.urls')),
-    path('api/v1/dashboard/', include('dashboard.urls'))
+    path('api/v1/dashboard/', include('dashboard.urls')),
+    path('api/v1/admin/', include('adminpage.urls'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -4,6 +4,7 @@ from django.db import models
 from JWTAuth.models import Employee
 
 # Create your models here.
+from forum.models import Topic
 
 
 class Training(models.Model):
@@ -11,6 +12,7 @@ class Training(models.Model):
     img = CloudinaryField('image')
     organizer = models.CharField(max_length=50)
     about = RichTextField(blank=True)
+    topic = models.ManyToManyField(Topic, blank=True)
 
 
     def __str__(self) :
@@ -41,3 +43,11 @@ class Schedule(models.Model) :
 
     def __str__(self) :
         return self.title
+
+class Competency(models.Model) :
+    description = models.CharField(max_length=200)
+    duration = models.DurationField()
+    training = models.ForeignKey(Training, on_delete=models.CASCADE)
+
+    def __str__(self) :
+        return str(self.training)

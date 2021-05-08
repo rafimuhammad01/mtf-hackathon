@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.conf.global_settings import MEDIA_ROOT
 from django.db import models
 from forum.models import Topic
@@ -21,8 +23,8 @@ class Course(models.Model) :
     totalRating = models.ManyToManyField(Employee, blank=True)
     estimateTime = models.TimeField()
     totalParticipant = models.IntegerField(default=0)
-    forum = models.ForeignKey(Forum, blank=True, on_delete=models.CASCADE)
     totalStepAndQuiz = models.FloatField(default=0)
+    dateAdded = models.DateTimeField(default=datetime.now())
 
     def __str__(self) :
         return self.name
@@ -97,9 +99,19 @@ class CourseOwned(models.Model) :
     lastQuiz = models.ForeignKey(QuizSection, blank=True, null=True, on_delete=models.CASCADE)
     sectionOwned = models.ManyToManyField('SectionOwned', blank=True)
     notes = models.ManyToManyField('Notes', blank=True)
+    dateJoined = models.DateTimeField(default=datetime.now())
 
     def __str__(self):
         return str(self.owner) + str(self.course)
+
+class AccessTime (models.Model) :
+    owner = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    duration = models.DurationField()
+    course = models.ForeignKey(CourseOwned, on_delete=models.CASCADE)
+    date = models.DateTimeField(default=datetime.now())
+
+    def __str__(self):
+        return self.owner.user.usernaame + " " + self.course.name + " " + self.duration
 
 class SectionOwned(models.Model) :
     owner = models.ForeignKey(Employee, on_delete=models.CASCADE)

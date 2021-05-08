@@ -4,10 +4,12 @@ from JWTAuth.models import Employee
 
 # Create your models here.
 
+
 class Forum(models.Model):
     title = models.CharField(max_length=50)
     question = models.TextField(max_length=500)
     owner = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="forum_owner")
+    course = models.ForeignKey('course.Course', null=True, blank=True, on_delete=models.CASCADE, related_name="course_owner")
     answer = models.ManyToManyField('Answer', blank=True)
     topic = models.ManyToManyField('Topic', blank=True)
     upvote = models.ManyToManyField(Employee, blank=True)
